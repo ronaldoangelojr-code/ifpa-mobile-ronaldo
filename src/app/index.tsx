@@ -1,98 +1,274 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from "react";import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet
+} from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
+const perguntas = [
+  {
+    pergunta: "O que significa a sigla RN em React Native?",
+    opcoes: [
+      "React Node",
+      "React Native",
+      "Random Number",
+      "Responsive Network"
+    ],
+    resposta: "React Native"
+  },
+
+  {
+    pergunta: "Qual linguagem é normalmente usada para desenvolver aplicativos React Native?",
+    opcoes: [
+      "Python",
+      "Java",
+      "JavaScript",
+      "C#"
+    ],
+    resposta: "JavaScript"
+  },
+
+  {
+    pergunta: "Qual comando cria um novo projeto Expo?",
+    opcoes: [
+      "npm create react",
+      "npx create-expo-app",
+      "react start",
+      "expo install app"
+    ],
+    resposta: "npx create-expo-app"
+  },
+
+  {
+    pergunta: "Qual componente é usado para exibir textos no React Native?",
+    opcoes: [
+      "View",
+      "Text",
+      "Button",
+      "Screen"
+    ],
+    resposta: "Text"
+  },
+
+  {
+    pergunta: "Qual componente cria uma área de tela no React Native?",
+    opcoes: [
+      "View",
+      "Image",
+      "TextInput",
+      "FlatList"
+    ],
+    resposta: "View"
+  },
+
+  {
+    pergunta: "Qual hook é usado para criar estados em componentes funcionais?",
+    opcoes: [
+      "useEffect",
+      "useState",
+      "useScreen",
+      "useApp"
+    ],
+    resposta: "useState"
+  },
+
+  {
+    pergunta: "Qual componente é recomendado para listas grandes?",
+    opcoes: [
+      "ScrollView",
+      "FlatList",
+      "View",
+      "TouchableOpacity"
+    ],
+    resposta: "FlatList"
+  },
+
+  {
+    pergunta: "Qual componente permite criar botões clicáveis?",
+    opcoes: [
+      "TouchableOpacity",
+      "Text",
+      "StyleSheet",
+      "StatusBar"
+    ],
+    resposta: "TouchableOpacity"
   }
-  if (Device.isDevice) {
+];
+
+
+export default function App() {
+
+  const [indice, setIndice] = useState(0);
+  const [pontos, setPontos] = useState(0);
+  const [finalizado, setFinalizado] = useState(false);
+
+
+  function responder(opcao) {
+
+    if(opcao === perguntas[indice].resposta){
+      setPontos(pontos + 1);
+    }
+
+
+    if(indice + 1 < perguntas.length){
+
+      setIndice(indice + 1);
+
+    } else {
+
+      setFinalizado(true);
+
+    }
+
+  }
+
+
+  function reiniciar(){
+
+    setIndice(0);
+    setPontos(0);
+    setFinalizado(false);
+
+  }
+
+
+
+  if(finalizado){
+
     return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
+
+      <View style={styles.container}>
+
+        <Text style={styles.titulo}>
+          Quiz Finalizado 🎉
+        </Text>
+
+
+        <Text style={styles.pontos}>
+          Você acertou {pontos} de {perguntas.length}
+        </Text>
+
+
+        <TouchableOpacity
+          style={styles.botao}
+          onPress={reiniciar}
+        >
+
+          <Text style={styles.textoBotao}>
+            Jogar novamente
+          </Text>
+
+        </TouchableOpacity>
+
+
+      </View>
+
     );
+
   }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+
+
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+
+    <View style={styles.container}>
+
+
+      <Text style={styles.titulo}>
+        Quiz React Native 📱
+      </Text>
+
+
+      <Text style={styles.contador}>
+        Pergunta {indice + 1} / {perguntas.length}
+      </Text>
+
+
+
+      <Text style={styles.pergunta}>
+        {perguntas[indice].pergunta}
+      </Text>
+
+
+
+      {
+        perguntas[indice].opcoes.map((opcao)=> (
+
+          <TouchableOpacity
+            key={opcao}
+            style={styles.botao}
+            onPress={() => responder(opcao)}
+          >
+
+            <Text style={styles.textoBotao}>
+              {opcao}
+            </Text>
+
+          </TouchableOpacity>
+
+        ))
+      }
+
+
+    </View>
+
   );
+
 }
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+
+  container:{
+    flex:1,
+    backgroundColor:"#f5f5f5",
+    alignItems:"center",
+    justifyContent:"center",
+    padding:20
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+
+
+  titulo:{
+    fontSize:28,
+    fontWeight:"bold",
+    marginBottom:20
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+
+
+  contador:{
+    fontSize:18,
+    marginBottom:20
   },
-  title: {
-    textAlign: 'center',
+
+
+  pergunta:{
+    fontSize:22,
+    textAlign:"center",
+    marginBottom:30
   },
-  code: {
-    textTransform: 'uppercase',
+
+
+  botao:{
+    width:"90%",
+    backgroundColor:"#2196F3",
+    padding:15,
+    borderRadius:10,
+    marginBottom:15
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+
+  textoBotao:{
+    color:"white",
+    fontSize:18,
+    textAlign:"center"
   },
+
+
+  pontos:{
+    fontSize:22,
+    marginBottom:30
+  }
+
 });
